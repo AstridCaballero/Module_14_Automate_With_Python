@@ -13,10 +13,13 @@ def create_volume_snapshots():
         ]
     )
     for volume in volumes['Volumes']:
-        new_snapshot = ec2_client.create_snapshot(
-            VolumeId=volume['VolumeId']
-        )
-        print(new_snapshot)
+        try:
+            new_snapshot = ec2_client.create_snapshot(
+                VolumeId=volume['VolumeId']
+            )
+            print(new_snapshot)
+        except:
+            # handle error here
 
 schedule.every(20).seconds.do(create_volume_snapshots)
 
