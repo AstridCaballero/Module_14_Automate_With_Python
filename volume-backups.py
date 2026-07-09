@@ -1,7 +1,9 @@
+import os
 import boto3
 import schedule
 
-ec2_client = boto3.client('ec2', region_name='eu-west-2')
+region = os.environ.get("AWS_REGION", "eu-west-2")
+ec2_client = boto3.client('ec2', region_name=region)
 
 def create_volume_snapshots():
     volumes = ec2_client.describe_volumes(
@@ -18,8 +20,8 @@ def create_volume_snapshots():
                 VolumeId=volume['VolumeId']
             )
             print(new_snapshot)
-        except:
-            # handle error here
+        except Exception as e:
+            print(f"Error occurred while creating snapshot for volume {volume['VolumeId']}: {e}")
 
 schedule.every(20).seconds.do(create_volume_snapshots)
 
